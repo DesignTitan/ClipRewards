@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { HideOnGate } from "@/components/hide-on-gate";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -30,9 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <SiteHeader />
+        <HideOnGate>
+          <SiteHeader />
+        </HideOnGate>
         <main className="flex-1">{children}</main>
-        <SiteFooter />
+        <HideOnGate>
+          <SiteFooter />
+        </HideOnGate>
       </body>
     </html>
   );

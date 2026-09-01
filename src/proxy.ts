@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { AUTH_COOKIE, hasValidAccessCookie } from "@/lib/site-password";
 import {
   SUPABASE_ANON_KEY,
   SUPABASE_URL,
@@ -8,12 +9,37 @@ import {
 } from "@/lib/supabase/config";
 
 /**
- * Refreshes the Supabase auth session on every request so Server Components
- * always read a valid token. A no-op in demo mode.
+ * Paths that must stay reachable without the site password: the gate itself,
+ * and the machine callback, which authenticates with its own HMAC signature.
+ */
+const PUBLIC_PATHS = ["/login", "/api/login", "/api/webhooks"];
+
+function isPublic(pathname: string) {
+  return PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+}
+
+/**
+ * Gates the whole app behind a shared site password, then refreshes the
+ * Supabase auth session so Server Components always read a valid token
+ * (a no-op in demo mode).
  *
  * (Next 16 renamed the `middleware` file convention to `proxy`.)
  */
 export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+
+  if (
+    !isPublic(pathname) &&
+    !(await hasValidAccessCookie(request.cookies.get(AUTH_COOKIE)?.value))
+  ) {
+    const login = new URL("/login", request.url);
+    // Send them back where they were headed once they're through the gate.
+    login.searchParams.set("next", `${pathname}${search}`);
+    return NextResponse.redirect(login);
+  }
+
   const response = NextResponse.next({ request });
 
   if (!isSupabaseConfigured) return response;

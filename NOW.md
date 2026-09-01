@@ -2,34 +2,26 @@
 
 ## Just done (2026-09-01)
 
-- Scaffolded the full app: Next.js 16.3.4 (App Router, Turbopack) + React 19.2.8 +
-  Tailwind v4 + Supabase. Production build passes; all 13 routes return 200.
-- Built both sides end-to-end — landing, campaign browse/detail, brand dashboard +
-  campaign creation and management, clipper dashboard + clip review/scheduling,
-  payouts, leaderboard.
-- Data layer sits behind one `DataSource` interface (`src/lib/db.ts`): seeded
-  in-memory demo store by default, Supabase/Postgres as soon as the two public
-  env vars are set. Aggregations in `src/lib/queries.ts` are shared by both.
-- AI clipping is a swappable `ClipperProvider` (`src/lib/ai/clipper.ts`) — `stub`
-  (deterministic, offline) and `http`. HMAC-verified async callback at
-  `/api/webhooks/clipper`.
-- `supabase/schema.sql` carries the tables, enums, RLS policies, two read-model
-  views, and the earnings/spend triggers that clamp payouts to the per-clipper cap
-  and the campaign budget.
+- Put the whole app behind a shared site password. `src/proxy.ts` (Next 16's
+  renamed `middleware`) redirects any un-cookied request to `/login?next=…` and
+  then runs the existing Supabase session refresh.
+- Password comes from `SITE_PASSWORD`, falling back to `bubs2026`. The cookie
+  stores a SHA-256 of the password, not the password, and is httpOnly +
+  sameSite=lax + secure in production, 30-day expiry.
+- `/login` renders bare (site header and footer are hidden there via
+  `HideOnGate`) — every nav link behind the gate would just bounce back anyway.
+- `/api/webhooks/*` is exempt: the clipper callback authenticates with its own
+  HMAC and has no browser to redirect.
 
 ## Verified
 
-- All page routes 200, unknown route 404s.
-- Campaign create/update validation (short title, bad URL, zero rate, cap > budget,
-  budget below spend) all rejected with useful messages.
-- Clip generate → schedule works; illegal state transitions and off-campaign
-  platforms rejected.
-- Payout request validated against real available balance and the $50 minimum.
-- Webhook accepts a correct HMAC and rejects tampered bodies and malformed
-  signatures.
-- Fixed a real bug found in testing: the stub provider used signed `>>`, which for
-  high-bit seeds produced negative jitter and clips with `endSeconds <
-  startSeconds`. Now unsigned, with a filter in the route as a second guard.
+- `/leaderboard` while logged out → redirected to `/login?next=%2Fleaderboard`;
+  correct password lands back on `/leaderboard`, and the session carries across
+  pages and API routes (`/api/payouts` → 200).
+- Wrong password → 401, empty password → 422, and neither sets a cookie.
+- API routes are gated too — an un-cookied `fetch('/api/payouts')` redirects.
+- `?next=` is path-only: `https://evil.com/x`, `//evil.com/x` and
+  `javascript:alert(1)` all collapse to `/`; `/campaigns?q=a` is preserved.
 
 ## Deployed (2026-09-01)
 
