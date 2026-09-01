@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #07080a;
+  --color-surface: #0e0f13;
+  --color-surface-2: #15171d;
+  --color-surface-3: #1c1f26;
+  --color-line: #24272f;
+  --color-line-soft: #1a1c22;
+
+  --color-text: #edeef1;
+  --color-muted: #8b909b;
+  --color-faint: #5e636d;
+
+  --color-lime: #c9ff46;
+  --color-lime-dim: #9fd41f;
+  --color-violet: #a78bfa;
+  --color-pink: #f472b6;
+  --color-cyan: #22d3ee;
+  --color-amber: #fbbf24;
+  --color-danger: #fb7185;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono:
+    ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-card: 16px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    background-color: var(--color-ink);
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: #000;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  /* Keyboard focus stays visible everywhere; pointer focus stays quiet. */
+  :focus-visible {
+    outline: 2px solid var(--color-lime);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line-soft);
+    border-radius: var(--radius-card);
+  }
+
+  .card-hover {
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .card-hover:hover {
+    border-color: var(--color-line);
+    background-color: var(--color-surface-2);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.6rem 1.05rem;
+    line-height: 1.1;
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease,
+      color 140ms ease,
+      opacity 140ms ease;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--color-lime);
+    color: #0a0c04;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: #d8ff77;
+  }
+
+  .btn-secondary {
+    background-color: var(--color-surface-2);
+    color: var(--color-text);
+    border: 1px solid var(--color-line);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-3);
+    border-color: #313640;
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-muted);
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--color-text);
+    background-color: var(--color-surface-2);
+  }
+
+  .input {
+    width: 100%;
+    background-color: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    transition: border-color 140ms ease;
+  }
+
+  .input::placeholder {
+    color: var(--color-faint);
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: var(--color-lime);
+  }
+
+  .label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background-color: var(--color-surface-2);
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Subtle top-of-page glow used on the landing hero and dashboard headers. */
+  .aurora {
+    background-image:
+      radial-gradient(
+        60rem 30rem at 15% -10%,
+        rgba(201, 255, 70, 0.13),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 28rem at 85% -5%,
+        rgba(167, 139, 250, 0.16),
+        transparent 60%
+      );
+  }
+
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
