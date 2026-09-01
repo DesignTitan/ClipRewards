@@ -33,6 +33,11 @@
   in the Vercel project switches it to the real database with no code change.
 - Verified after deploy: root returns 200 on both the alias and the deployment
   URL, no deployment-protection auth wall, page renders, no console errors.
+- Password gate verified live: https://clip-rewards.vercel.app/campaigns
+  redirects to /login?next=%2Fcampaigns, and `bubs2026` lands on /campaigns.
+- `SITE_PASSWORD` is NOT set in the Vercel project, so production is on the
+  "bubs2026" fallback. Set that env var to change the password without a code
+  change (it needs a redeploy to take effect).
 - Project dir is `ClipRewards`, which Vercel rejects as a project name
   (uppercase), so the project was linked explicitly as `clip-rewards`.
 
