@@ -31,6 +31,19 @@
   high-bit seeds produced negative jitter and clips with `endSeconds <
   startSeconds`. Now unsigned, with a filter in the route as a second guard.
 
+## Deployed (2026-09-01)
+
+- Live at **https://clip-rewards.vercel.app** (Vercel project
+  `bubs-1063s-projects/clip-rewards`, linked to the `DesignTitan/ClipRewards`
+  GitHub repo, so pushes to `main` now auto-deploy).
+- Deployed with no env vars set, so production is running the seeded in-memory
+  demo store. Setting `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  in the Vercel project switches it to the real database with no code change.
+- Verified after deploy: root returns 200 on both the alias and the deployment
+  URL, no deployment-protection auth wall, page renders, no console errors.
+- Project dir is `ClipRewards`, which Vercel rejects as a project name
+  (uppercase), so the project was linked explicitly as `clip-rewards`.
+
 ## In progress
 
 - Nothing outstanding. The build is clean and the demo runs with no configuration.
@@ -43,4 +56,5 @@
   the earnings trigger recalculates from there on its own.
 - Once tables grow, swap the whole-table reads in `queries.ts` for the
   `v_campaign_stats` and `v_clipper_leaderboard` views already in the schema.
-- Not a git repo with a remote yet — `git init` + first commit are local only.
+- Set the Supabase env vars in the Vercel project to move production off the
+  in-memory demo store.
